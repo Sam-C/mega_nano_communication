@@ -12,7 +12,7 @@
 int led = 13;
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   pinMode(led, OUTPUT);
   digitalWrite(led,LOW);
 }
@@ -20,17 +20,17 @@ void setup() {
 void loop() {
   //wait and read request
   if (Serial.available() > 0){
-    String requestReceived = Serial.readStringUntil('\n');
-    Serial.println(requestReceived);  //echo the string received
-    Serial.flush();
-    digitalWrite(led,HIGH);
-//    if (requestReceived == ("f" + THIS_NANO_ID)){  //if it's a feedback request for this nano
-//      Serial.println(THIS_NANO_ID + "777");                     //send feedback
-//    }
-
+    String requestReceived = Serial.readStringUntil('\n');    
+    // FOR THE MOMENT THIS ONLY SUPPORTS 10 OPTIONS
+    int receivedID = int(requestReceived.charAt(1)) - '0';
+    if(receivedID == THIS_NANO_ID){
+      digitalWrite(led,HIGH);
+      Serial.println("Im here.");
+      Serial.flush();
+    }
   } else {
     //Serial.println("I can't here you!");
     //Serial.flush();
   }
-  delay(3000);
+  //delay(3000);
 }
