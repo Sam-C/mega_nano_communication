@@ -8,7 +8,8 @@
  * 115200 for 16MHz CPU (mega, nano)
  */
 
-#define THIS_NANO_ID 0
+//#define THIS_NANO_ID 0
+#define THIS_NANO_ID 1
 int led = 13;
 
 void setup() {
@@ -25,7 +26,8 @@ void loop() {
     int receivedID = int(requestReceived.charAt(1)) - '0';
     if(receivedID == THIS_NANO_ID){
       digitalWrite(led,HIGH);
-      Serial.println("Im here.");
+      //Serial.println("Im here");
+      Serial.println("me too");
       Serial.flush();
     }
   } else {
