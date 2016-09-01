@@ -24,6 +24,8 @@ bool ledState = LOW;
 unsigned long int t_ref;
 unsigned long int loopTime;
 int count = 0;
+String printString = "l00000001001000110100010101100111";
+char testByte = '0';
 
 SoftwareSerial serialNano[8] = {SoftwareSerial (10, 22), // RX, TX
                                 SoftwareSerial (11, 23), //1
@@ -71,26 +73,39 @@ void loop() {
   if((millis() - t_ref) > TIME_STEP * 1000){
     t_ref = millis();
     count++;
-    if(count == 51){
-      Serial1.println("l00000001001000110100010101100111");
+    if(count > 2000){
+      Serial.println("STOP");
+      Serial.flush();
+    }else if(count % 10 == 1){
+      //Serial.println(count - 1);
+      //Serial.flush();
+      //Serial.println("LENGTH_CHANGE");
+      //Serial.flush();
+      if(testByte == '9'){
+        testByte = '0';
+      } else {
+        testByte++;
+      }
+      printString[3] = testByte;
+      Serial1.println(printString);      
+      Serial1.flush();
     } else {
-      //for (int i = 0; i < NUMBER_CONNECTED_NANOS; i++) {
-      for (int i = 0; i <8; i++) {
+      for (int i = 0; i < NUMBER_CONNECTED_NANOS; i++) {
         serialNano[i].listen();
         
         request = "f" + String(i);
         Serial1.println(request); 
         Serial1.flush();
-        Serial.println("broadcasted: " + request);  //for debugging
-        Serial.flush();                             //for debugging
+        //Serial.println("broadcasted: " + request);  //for debugging
+        //Serial.flush();                             //for debugging
         
         if (serialNano[i].available() > 0) {
           feedback = serialNano[i].readStringUntil('\n');
           ledState = !ledState;           //for debugging
           digitalWrite(13, ledState);     //for debugging
           //Put feedback into certain place inside combinedFeedback, corresponding to the Nano ID (to-do!)
-          Serial.println("From Nano" + String(i) + ":" + feedback);  //for debugging: pass Nano feedback to computer
-          Serial.flush();                                            //for debugging
+          //Serial.println("From Nano" + String(i) + ":" + feedback);  //for debugging: pass Nano feedback to computer
+          //Serial.flush();                                            //for debugging
           
         } //if a nano gives no feedback, do nothing(keep the last feedback value).
       }
